@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" fill="none">
+  <circle cx="140" cy="140" r="110" stroke="#4aa2eb" stroke-width="8" opacity="0.35"/>
+  <path d="M95 170V110h28c14 0 23 9 23 22.5 0 8.5-4 15-10.5 18.5L155 170h-19l-13.5-21H114v21H95zm16-34h11c6 0 9.5-3.5 9.5-8.5S128 119 122 119h-11v17zM165 170l22-68h17l22 68h-16.5l-4-12.5h-20l-4 12.5H165zm25-43-7 21h14l-7-21z" fill="#4aa2eb" opacity="0.25"/>
+</svg>

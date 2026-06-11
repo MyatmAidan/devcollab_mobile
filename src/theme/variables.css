@@ -1,0 +1,94 @@
+/* DevCollab Brand Design System — matched to DevCollab-logo.png */
+
+:root {
+  /* Brand — logo blue (#0893f8), amber accent (#f0b02c), neutral grey (#8f8f8f) */
+  --ion-color-primary: #0893f8;
+  --ion-color-primary-rgb: 8, 147, 248;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0781da;
+  --ion-color-primary-tint: #219ef9;
+
+  --ion-color-secondary: #f0b02c;
+  --ion-color-secondary-rgb: 240, 176, 44;
+  --ion-color-secondary-contrast: #1a1a1a;
+  --ion-color-secondary-contrast-rgb: 26, 26, 26;
+  --ion-color-secondary-shade: #d39b27;
+  --ion-color-secondary-tint: #f2b841;
+
+  --ion-color-tertiary: #383838;
+  --ion-color-tertiary-rgb: 56, 56, 56;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #313131;
+  --ion-color-tertiary-tint: #4c4c4c;
+
+  --ion-color-success: #22c55e;
+  --ion-color-warning: #f0b02c;
+  --ion-color-danger: #ef4444;
+
+  /* Surfaces */
+  --dc-bg: #f7f7f7;
+  --dc-surface: #ffffff;
+  --dc-surface-elevated: #ffffff;
+  --dc-border: #d4d4d4;
+  --dc-border-light: #e8e8e8;
+  --dc-feed-bg: #f0f0f0;
+
+  /* Text */
+  --dc-text: #1a1a1a;
+  --dc-text-secondary: #8f8f8f;
+  --dc-text-muted: #a3a3a3;
+
+  /* Gradients */
+  --dc-gradient-brand: linear-gradient(135deg, #0893f8 0%, #119df6 100%);
+  --dc-gradient-cover: linear-gradient(135deg, #0893f8 0%, #383838 100%);
+  --dc-gradient-auth: linear-gradient(160deg, #f0f9ff 0%, #f7f7f7 45%, #ffffff 100%);
+
+  /* Shadows */
+  --dc-shadow-sm: 0 1px 3px rgba(8, 147, 248, 0.08);
+  --dc-shadow-md: 0 4px 16px rgba(8, 147, 248, 0.12);
+  --dc-shadow-lg: 0 8px 32px rgba(8, 147, 248, 0.16);
+  --dc-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+
+  /* Radius */
+  --dc-radius-sm: 8px;
+  --dc-radius-md: 12px;
+  --dc-radius-lg: 16px;
+  --dc-radius-xl: 24px;
+  --dc-radius-full: 9999px;
+
+  /* Motion */
+  --dc-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --dc-transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --dc-transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Tab bar */
+  --dc-tab-height: 56px;
+
+  /* Messenger */
+  --dc-messenger-blue: #0893f8;
+  --dc-messenger-bg: #f0f0f0;
+  --dc-messenger-bubble-theirs: #e8e8e8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --dc-bg: #0a0a0a;
+    --dc-surface: #141414;
+    --dc-surface-elevated: #1c1c1c;
+    --dc-border: #383838;
+    --dc-border-light: #2b2b2b;
+    --dc-feed-bg: #0a0a0a;
+    --dc-text: #f4ffff;
+    --dc-text-secondary: #8f8f8f;
+    --dc-text-muted: #6b6b6b;
+    --dc-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --dc-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --dc-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+    --dc-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.35);
+    --dc-gradient-auth: linear-gradient(160deg, #0a0a0a 0%, #141414 50%, #0a0a0a 100%);
+    --dc-messenger-bg: #0a0a0a;
+    --dc-messenger-bubble-theirs: #2b2b2b;
+  }
+}

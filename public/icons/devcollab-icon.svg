@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="14" fill="url(#icon-bg)"/>
+  <path d="M18 42V22h8.5c4.2 0 7 2.8 7 6.8 0 2.6-1.2 4.6-3.2 5.6L35 42h-5.8l-4.1-6.4H22.8V42H18zm4.8-10.2h3.4c1.8 0 2.8-1 2.8-2.6s-1-2.6-2.8-2.6h-3.4v5.2zM38.8 42l6.8-20h5.2l6.8 20h-5.1l-1.2-3.8H45l-1.2 3.8h-5zm7.8-12.7-2.2 7h4.4l-2.2-7z" fill="white"/>
+  <defs>
+    <linearGradient id="icon-bg" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4aa2eb"/>
+      <stop offset="1" stop-color="#2b4fc0"/>
+    </linearGradient>
+  </defs>
+</svg>

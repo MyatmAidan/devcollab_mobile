@@ -1,0 +1,1012 @@
+/* ─── Keyframe Animations ─── */
+
+@keyframes dc-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dc-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dc-scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes dc-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes dc-pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes dc-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes dc-gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ─── Global ─── */
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--dc-text);
+}
+
+ion-content {
+  --background: var(--dc-bg);
+}
+
+ion-toolbar {
+  --background: var(--dc-surface);
+  --border-color: var(--dc-border-light);
+}
+
+ion-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+
+/* ─── Tab Bar (Instagram-style) ─── */
+
+.dc-tab-bar {
+  --background: var(--dc-surface);
+  border-top: 1px solid var(--dc-border-light);
+  height: var(--dc-tab-height);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.dc-tab-bar ion-tab-button {
+  --color: var(--dc-text-muted);
+  --color-selected: var(--ion-color-primary);
+  transition: transform var(--dc-transition-fast);
+}
+
+.dc-tab-bar ion-tab-button.tab-selected {
+  transform: scale(1.05);
+}
+
+.dc-tab-bar ion-tab-button ion-icon {
+  font-size: 1.5rem;
+  transition: transform var(--dc-transition-spring);
+}
+
+.dc-tab-bar ion-tab-button.tab-selected ion-icon {
+  transform: scale(1.1);
+}
+
+.dc-tab-bar ion-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Auth Pages ─── */
+
+.auth-page {
+  --background: var(--dc-gradient-auth);
+}
+
+.auth-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 3rem 1rem 2rem;
+  animation: dc-slide-up 0.6s ease-out;
+}
+
+.auth-brand {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+}
+
+.auth-logo-img {
+  height: 52px;
+  width: auto;
+  max-width: min(100%, 280px);
+  object-fit: contain;
+}
+
+.auth-heading {
+  margin: 0 0 0.25rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: -0.02em;
+  color: var(--dc-text);
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: var(--dc-text-secondary);
+  margin: 0 0 2rem;
+  font-size: 0.95rem;
+}
+
+.auth-card {
+  background: var(--dc-surface);
+  border-radius: var(--dc-radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--dc-shadow-card);
+  border: 1px solid var(--dc-border-light);
+}
+
+.auth-card ion-item {
+  --background: transparent;
+  --border-color: var(--dc-border-light);
+  --padding-start: 0;
+  margin-bottom: 0.25rem;
+}
+
+.auth-card ion-button[type="submit"] {
+  margin-top: 1rem;
+  --border-radius: var(--dc-radius-md);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  height: 48px;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--dc-text-secondary);
+}
+
+.auth-footer a {
+  color: var(--ion-color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ─── Profile (Instagram / LinkedIn hybrid) ─── */
+
+.profile-cover {
+  height: 140px;
+  background: var(--dc-gradient-cover);
+  background-size: 200% 200%;
+  animation: dc-gradient-shift 8s ease infinite;
+  position: relative;
+}
+
+.profile-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, var(--dc-bg) 100%);
+}
+
+.profile-header-content {
+  position: relative;
+  padding: 0 1.25rem 1.5rem;
+  margin-top: -48px;
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-avatar-wrap .avatar-lg {
+  width: 96px;
+  height: 96px;
+  border: 4px solid var(--dc-surface);
+  box-shadow: var(--dc-shadow-md);
+}
+
+.profile-name {
+  margin: 0.75rem 0 0.15rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.profile-role {
+  margin: 0;
+  color: var(--dc-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 1.5rem;
+  margin: 1rem 0;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--dc-border-light);
+  border-bottom: 1px solid var(--dc-border-light);
+}
+
+.profile-stat {
+  text-align: center;
+}
+
+.profile-stat strong {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--dc-text);
+}
+
+.profile-stat span {
+  font-size: 0.75rem;
+  color: var(--dc-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.profile-section {
+  background: var(--dc-surface);
+  border-radius: var(--dc-radius-md);
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--dc-border-light);
+  box-shadow: var(--dc-shadow-sm);
+}
+
+.profile-section h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--dc-text-secondary);
+}
+
+.profile-section p {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--dc-text);
+}
+
+.profile-actions {
+  padding: 0 1.25rem 1.5rem;
+}
+
+.profile-actions ion-button {
+  --border-radius: var(--dc-radius-md);
+  font-weight: 700;
+  height: 44px;
+}
+
+.profile-hero,
+.developer-card-top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.developer-card-top h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.headline-text {
+  margin: 0.25rem 0 0;
+  color: var(--dc-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.meta-text,
+.role-text {
+  color: var(--dc-text-secondary);
+  font-size: 0.85rem;
+}
+
+.profile-detail section {
+  margin-bottom: 1rem;
+}
+
+.link-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.link-list a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.85rem;
+  background: var(--dc-feed-bg);
+  border-radius: var(--dc-radius-full);
+  color: var(--ion-color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform var(--dc-transition-fast), background var(--dc-transition-fast);
+}
+
+.link-list a:active {
+  transform: scale(0.96);
+  background: var(--dc-border-light);
+}
+
+/* ─── Developer Cards (Discover feed) ─── */
+
+.discover-content {
+  --background: var(--dc-feed-bg);
+}
+
+.discover-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--dc-surface);
+  border-bottom: 1px solid var(--dc-border-light);
+  padding: 0.75rem 1rem 1rem;
+  box-shadow: var(--dc-shadow-sm);
+}
+
+.discover-search {
+  --background: var(--dc-feed-bg);
+  --border-radius: var(--dc-radius-full);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  border-radius: var(--dc-radius-full);
+  font-size: 0.95rem;
+}
+
+.discover-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.discover-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-chip {
+  flex-shrink: 0;
+  --background: var(--dc-feed-bg);
+  --color: var(--dc-text);
+  font-size: 0.8rem;
+  font-weight: 600;
+  height: 32px;
+  border: 1px solid var(--dc-border);
+  transition: all var(--dc-transition-fast);
+}
+
+.filter-chip.active {
+  --background: var(--ion-color-primary);
+  --color: #fff;
+  border-color: var(--ion-color-primary);
+}
+
+.developer-card {
+  margin: 0.75rem 1rem;
+  border-radius: var(--dc-radius-lg);
+  box-shadow: var(--dc-shadow-card);
+  border: 1px solid var(--dc-border-light);
+  overflow: hidden;
+  transition: transform var(--dc-transition-fast), box-shadow var(--dc-transition-fast);
+}
+
+.developer-card:active {
+  transform: scale(0.98);
+}
+
+.developer-card ion-card-content {
+  padding: 1.25rem;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.card-actions ion-button {
+  --border-radius: var(--dc-radius-md);
+  font-weight: 600;
+  flex: 1;
+}
+
+.skill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.75rem 0;
+}
+
+.skill-row ion-chip {
+  --background: var(--dc-feed-bg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  height: 28px;
+  margin: 0;
+}
+
+/* ─── Connections (Facebook-style) ─── */
+
+.connections-content {
+  --background: var(--dc-feed-bg);
+}
+
+.friend-requests-section {
+  background: var(--dc-surface);
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--dc-border-light);
+}
+
+.section-title {
+  margin: 0;
+  padding: 1rem 1rem 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--dc-text-secondary);
+}
+
+.friend-request-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--dc-border-light);
+  animation: dc-slide-up 0.4s ease-out both;
+}
+
+.friend-request-card:last-child {
+  border-bottom: none;
+}
+
+.friend-request-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.friend-request-info h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.friend-request-info p {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: var(--dc-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.friend-request-actions {
+  display: flex;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.friend-request-actions ion-button {
+  --border-radius: var(--dc-radius-md);
+  font-weight: 600;
+  font-size: 0.8rem;
+  height: 34px;
+}
+
+.friends-list {
+  background: var(--dc-surface);
+}
+
+.friend-item {
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  --background: var(--dc-surface);
+  transition: background var(--dc-transition-fast);
+}
+
+.friend-item:active {
+  --background: var(--dc-feed-bg);
+}
+
+.friend-item ion-label h2 {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.friend-request-item ion-label h2,
+.messenger-thread-item ion-label h2 {
+  font-weight: 700;
+}
+
+/* ─── Messenger / Chat ─── */
+
+.messenger-toolbar {
+  --background: var(--dc-surface);
+  border-bottom: 1px solid var(--dc-border-light);
+}
+
+.messenger-list {
+  padding-top: 0;
+  background: var(--dc-surface);
+}
+
+.messenger-thread-item {
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  --background: var(--dc-surface);
+  transition: background var(--dc-transition-fast);
+}
+
+.messenger-thread-item:active {
+  --background: var(--dc-feed-bg);
+}
+
+.messenger-thread-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.messenger-thread-row h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.messenger-time {
+  font-size: 0.7rem;
+  color: var(--dc-text-muted);
+  flex-shrink: 0;
+}
+
+.messenger-preview {
+  color: var(--dc-text-secondary) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.85rem;
+}
+
+.messenger-unread-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dc-messenger-blue);
+  flex-shrink: 0;
+}
+
+.chat-content {
+  --background: var(--dc-messenger-bg);
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  padding: 1rem;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.chat-bubble-row {
+  display: flex;
+  animation: dc-slide-up 0.25s ease-out;
+}
+
+.chat-bubble-row.mine {
+  justify-content: flex-end;
+}
+
+.chat-bubble-row.theirs {
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+
+.chat-bubble {
+  max-width: 78%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 18px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  transition: transform var(--dc-transition-fast);
+}
+
+.chat-bubble.mine {
+  background: var(--dc-messenger-blue);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.theirs {
+  background: var(--dc-messenger-bubble-theirs);
+  color: var(--dc-text);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bubble span {
+  display: block;
+  font-size: 0.65rem;
+  opacity: 0.7;
+  margin-top: 0.2rem;
+}
+
+.chat-header-toolbar {
+  --min-height: 56px;
+  --background: var(--dc-surface);
+}
+
+.chat-header-user {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-inline-start: 0.25rem;
+}
+
+.chat-header-name {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.chat-avatar-slot {
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.chat-footer {
+  background: var(--dc-surface);
+  border-top: 1px solid var(--dc-border-light);
+}
+
+.messenger-input-toolbar {
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --background: var(--dc-surface);
+}
+
+.messenger-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0 0.5rem;
+}
+
+.messenger-input {
+  flex: 1;
+  --background: var(--dc-feed-bg);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  border-radius: 20px;
+}
+
+.messenger-send-btn {
+  --color: var(--dc-messenger-blue);
+  transition: transform var(--dc-transition-spring);
+}
+
+.messenger-send-btn:active {
+  transform: scale(0.85);
+}
+
+.chat-input-toolbar {
+  --padding-start: 0.5rem;
+  --padding-end: 0.5rem;
+}
+
+/* ─── Settings ─── */
+
+.settings-content {
+  --background: var(--dc-feed-bg);
+}
+
+.settings-profile-card {
+  background: var(--dc-surface);
+  margin: 1rem;
+  border-radius: var(--dc-radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--dc-shadow-card);
+  border: 1px solid var(--dc-border-light);
+  animation: dc-slide-up 0.5s ease-out;
+}
+
+.settings-profile-info h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.settings-profile-info p {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: var(--dc-text-secondary);
+}
+
+.settings-group {
+  background: var(--dc-surface);
+  margin: 0 1rem 0.75rem;
+  border-radius: var(--dc-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--dc-border-light);
+  box-shadow: var(--dc-shadow-sm);
+}
+
+.settings-group ion-item {
+  --padding-start: 16px;
+  --inner-padding-end: 12px;
+  --background: var(--dc-surface);
+  font-size: 0.95rem;
+}
+
+.settings-group ion-item ion-icon {
+  color: var(--ion-color-primary);
+  margin-right: 12px;
+  font-size: 1.2rem;
+}
+
+.settings-logout {
+  padding: 0 1rem 2rem;
+}
+
+.settings-logout ion-button {
+  --border-radius: var(--dc-radius-md);
+  font-weight: 700;
+  height: 48px;
+}
+
+/* ─── Loading ─── */
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 3rem;
+}
+
+.loading-spinner-icon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  animation: dc-float 2.5s ease-in-out infinite;
+}
+
+/* ─── Empty State ─── */
+
+.empty-state {
+  margin-top: 3rem;
+  animation: dc-fade-in 0.6s ease-out;
+}
+
+.empty-state-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--dc-feed-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  animation: dc-float 3s ease-in-out infinite;
+}
+
+.empty-state-icon ion-icon {
+  font-size: 2.5rem;
+  color: var(--dc-text-muted);
+}
+
+.empty-state h3 {
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* ─── Avatar sizes ─── */
+
+.avatar-sm {
+  width: 28px;
+  height: 28px;
+}
+
+.avatar-md {
+  width: 48px;
+  height: 48px;
+}
+
+.avatar-lg {
+  width: 72px;
+  height: 72px;
+}
+
+.avatar-ring {
+  padding: 3px;
+  background: var(--dc-gradient-brand);
+  border-radius: 50%;
+  display: inline-flex;
+}
+
+.avatar-ring ion-avatar,
+.avatar-ring .avatar-md,
+.avatar-ring .avatar-lg,
+.avatar-ring .avatar-sm {
+  border: 2px solid var(--dc-surface);
+}
+
+ion-avatar img {
+  object-fit: cover;
+}
+
+/* ─── Profile photo picker ─── */
+
+.profile-photo-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.profile-photo-file-input {
+  display: none;
+}
+
+.profile-photo-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.profile-photo-hint,
+.profile-photo-error {
+  margin: 0;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* ─── Profile photo crop modal ─── */
+
+.profile-crop-modal {
+  --background: #0a0a0a;
+}
+
+.profile-crop-stage {
+  position: relative;
+  height: min(62vh, 420px);
+  background: #111;
+}
+
+.profile-crop-controls {
+  background: var(--dc-surface);
+  border-top: 1px solid var(--dc-border-light);
+}
+
+.profile-crop-zoom-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--dc-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.profile-crop-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.profile-crop-actions ion-button {
+  flex: 1;
+  --border-radius: var(--dc-radius-md);
+  font-weight: 700;
+}
+
+.profile-photo-uploading {
+  display: flex;
+  justify-content: center;
+}
+
+/* ─── Onboarding ─── */
+
+.onboarding-hero {
+  text-align: center;
+  padding: 3rem 1.5rem 2rem;
+  animation: dc-slide-up 0.6s ease-out;
+}
+
+.onboarding-brand {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 1.75rem;
+}
+
+.onboarding-icon-img {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px rgba(8, 147, 248, 0.3));
+  animation: dc-float 3s ease-in-out infinite;
+}
+
+.onboarding-hero h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.03em;
+}
+
+.onboarding-hero p {
+  color: var(--dc-text-secondary);
+  line-height: 1.5;
+  margin: 0 0 2rem;
+}
+
+.onboarding-actions {
+  padding: 0 1.5rem;
+}
+
+.onboarding-actions ion-button {
+  --border-radius: var(--dc-radius-md);
+  font-weight: 700;
+  height: 48px;
+  margin-bottom: 0.5rem;
+}
+
+/* ─── Detail page ─── */
+
+.profile-detail-page {
+  padding: 0;
+}
+
+.profile-detail-cover {
+  height: 120px;
+  background: var(--dc-gradient-cover);
+  background-size: 200% 200%;
+  animation: dc-gradient-shift 8s ease infinite;
+}
+
+.profile-detail-body {
+  padding: 0 1.25rem 2rem;
+  margin-top: -40px;
+}
+
+/* ─── Buttons press effect ─── */
+
+ion-button {
+  transition: transform var(--dc-transition-fast);
+}
+
+ion-button:active:not(.button-disabled) {
+  transform: scale(0.97);
+}
+
+/* ─── Loading shimmer ─── */
+
+.dc-shimmer {
+  background: linear-gradient(90deg, var(--dc-feed-bg) 25%, var(--dc-border-light) 50%, var(--dc-feed-bg) 75%);
+  background-size: 200% 100%;
+  animation: dc-shimmer 1.5s infinite;
+  border-radius: var(--dc-radius-md);
+}
+
+.filters-panel ion-item {
+  --padding-start: 0;
+}
