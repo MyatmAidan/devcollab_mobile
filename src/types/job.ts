@@ -56,6 +56,7 @@ export interface JobFilters {
   search?: string;
   employment_type?: string;
   experience_level?: string;
+  category_id?: string;
   page?: number;
   per_page?: number;
 }

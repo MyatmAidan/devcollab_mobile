@@ -62,3 +62,20 @@ export function getErrorMessage(error: unknown, fallback = 'Something went wrong
   if (error instanceof Error) return error.message;
   return fallback;
 }
+
+export function extractErrors(error: unknown, fallback = 'Something went wrong.'): string[] {
+  if (axios.isAxiosError(error)) {
+    if (!error.response) {
+      if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+        return ['Cannot reach the server. Check your connection.'];
+      }
+    }
+    const data = error.response?.data as { message?: string; errors?: Record<string, string[]> } | undefined;
+    if (data?.errors) {
+      return Object.values(data.errors).flat();
+    }
+    if (data?.message) return [data.message];
+  }
+  if (error instanceof Error) return [error.message];
+  return [fallback];
+}

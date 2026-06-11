@@ -7,6 +7,7 @@ export interface User {
   avatar: string | null;
   role: string;
   status: string;
+  last_active_at: string | null;
   telegram_username: string | null;
   telegram_notify_enabled: boolean;
   telegram_linked_at: string | null;

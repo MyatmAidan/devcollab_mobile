@@ -12,12 +12,12 @@ import {
   IonSelectOption,
   IonTextarea,
   IonTitle,
-  IonToast,
   IonToolbar,
 } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getErrorMessage } from '../../api/axios';
+import { extractErrors, getErrorMessage } from '../../api/axios';
+import FormErrors from '../../components/FormErrors';
 import { getCategories, getSkills } from '../../api/developerApi';
 import { createProfile, getMyProfile } from '../../api/profileApi';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -42,6 +42,7 @@ const CreateProfilePage: React.FC = () => {
   const [skillsLoading, setSkillsLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [formErrors, setFormErrors] = useState<string[]>([]);
   const [form, setForm] = useState({
     category_id: '' as string,
     profile_photo: '',
@@ -82,6 +83,7 @@ const CreateProfilePage: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setSubmitting(true);
+    setFormErrors([]);
     setError(null);
     try {
       await createProfile(
@@ -95,7 +97,7 @@ const CreateProfilePage: React.FC = () => {
       );
       history.replace('/tabs/home');
     } catch (err) {
-      setError(getErrorMessage(err));
+      setFormErrors(extractErrors(err, 'Failed to create profile.'));
     } finally {
       setSubmitting(false);
     }
@@ -113,6 +115,7 @@ const CreateProfilePage: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
         {loading ? <LoadingSpinner /> : null}
+        {error ? <FormErrors errors={[error]} style={{ margin: '12px 0' }} /> : null}
         {!loading ? (
           <form onSubmit={handleSubmit}>
             <ProfilePhotoInput
@@ -180,12 +183,13 @@ const CreateProfilePage: React.FC = () => {
               loading={skillsLoading}
             />
 
+            <FormErrors errors={formErrors} style={{ margin: '12px 0 4px' }} />
+
             <IonButton expand="block" type="submit" className="ion-margin-top" disabled={submitting}>
               {submitting ? 'Saving...' : 'Save Profile'}
             </IonButton>
           </form>
         ) : null}
-        <IonToast isOpen={!!error} message={error ?? ''} duration={4000} color="danger" onDidDismiss={() => setError(null)} />
       </IonContent>
     </IonPage>
   );

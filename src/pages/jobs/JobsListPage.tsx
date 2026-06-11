@@ -1,6 +1,8 @@
 import {
+  IonBackButton,
   IonBadge,
   IonButton,
+  IonButtons,
   IonCard,
   IonCardContent,
   IonChip,
@@ -13,11 +15,12 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
-import { briefcaseOutline, locationOutline, cashOutline, ribbonOutline } from 'ionicons/icons';
+import { briefcaseOutline, cashOutline, locationOutline } from 'ionicons/icons';
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { getErrorMessage } from '../../api/axios';
 import { getJobs } from '../../api/jobApi';
+import { getCategories } from '../../api/developerApi';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import type { JobPosting } from '../../types/job';
 
@@ -26,6 +29,13 @@ const LEVEL_COLOR: Record<string, string> = {
   mid: 'primary',
   senior: 'warning',
   lead: 'danger',
+};
+
+const LEVEL_LABEL: Record<string, string> = {
+  junior: 'Junior',
+  mid: 'Mid-level',
+  senior: 'Senior',
+  lead: 'Lead',
 };
 
 const EMPLOYMENT_LABELS: Record<string, string> = {
@@ -46,18 +56,45 @@ function formatSalary(job: JobPosting): string | null {
   return `Up to ${currency} ${job.salary_max?.toLocaleString()}`;
 }
 
+interface RouteParams {
+  categoryId?: string;
+  level?: string;
+}
+
 const JobsListPage: React.FC = () => {
+  const { categoryId, level } = useParams<RouteParams>();
   const history = useHistory();
+
+  const hasFilters = !!categoryId;
+  const activeCategoryId = categoryId && categoryId !== 'all' ? categoryId : undefined;
+  const activeLevel = level && level !== 'all' ? level : undefined;
+
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [categoryName, setCategoryName] = useState<string>('');
+
+  useEffect(() => {
+    if (!activeCategoryId) return;
+    getCategories()
+      .then((cats) => {
+        const match = cats.find((c) => c.id === activeCategoryId);
+        if (match) setCategoryName(match.name_en);
+      })
+      .catch(() => {});
+  }, [activeCategoryId]);
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-        const response = await getJobs({ search: search || undefined, per_page: 20 });
+        const response = await getJobs({
+          search: search || undefined,
+          category_id: activeCategoryId,
+          experience_level: activeLevel,
+          per_page: 30,
+        });
         setJobs(response.data);
       } catch (err) {
         setError(getErrorMessage(err));
@@ -66,17 +103,37 @@ const JobsListPage: React.FC = () => {
       }
     };
     void load();
-  }, [search]);
+  }, [search, activeCategoryId, activeLevel]);
+
+  const filterLabel = [
+    categoryName || (activeCategoryId ? 'Category' : null),
+    activeLevel ? (LEVEL_LABEL[activeLevel] ?? activeLevel) : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Find Jobs</IonTitle>
-          <IonButton slot="end" fill="clear" size="small" onClick={() => history.push('/jobs/applications/me')}>
-            My Applications
-          </IonButton>
+          {hasFilters ? (
+            <IonButtons slot="start">
+              <IonBackButton defaultHref="/tabs/jobs" />
+            </IonButtons>
+          ) : null}
+          <IonTitle>{filterLabel || 'Find Jobs'}</IonTitle>
+          <IonButtons slot="end">
+            {hasFilters ? (
+              <IonButton fill="clear" size="small" onClick={() => history.push('/tabs/jobs')}>
+                Change
+              </IonButton>
+            ) : null}
+            <IonButton fill="clear" size="small" onClick={() => history.push('/jobs/applications/me')}>
+              My Apps
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
+
         <IonToolbar>
           <IonSearchbar
             value={search}
@@ -85,16 +142,41 @@ const JobsListPage: React.FC = () => {
             placeholder="Search jobs, skills, location..."
           />
         </IonToolbar>
+
+        {/* Active filter chips */}
+        {(activeCategoryId || activeLevel) ? (
+          <IonToolbar style={{ '--min-height': '40px' } as React.CSSProperties}>
+            <div style={{ display: 'flex', gap: 8, padding: '0 12px', overflowX: 'auto' }}>
+              {categoryName ? (
+                <IonChip color="secondary" style={{ margin: 0, height: 28, fontSize: 12 }}>
+                  <IonLabel>{categoryName}</IonLabel>
+                </IonChip>
+              ) : null}
+              {activeLevel ? (
+                <IonChip color={LEVEL_COLOR[activeLevel] ?? 'medium'} style={{ margin: 0, height: 28, fontSize: 12 }}>
+                  <IonLabel style={{ textTransform: 'capitalize' }}>{LEVEL_LABEL[activeLevel] ?? activeLevel}</IonLabel>
+                </IonChip>
+              ) : null}
+            </div>
+          </IonToolbar>
+        ) : null}
       </IonHeader>
 
       <IonContent>
         {loading ? <LoadingSpinner /> : null}
-        {error ? <p className="ion-padding" style={{ color: 'var(--ion-color-danger)' }}>{error}</p> : null}
+        {error ? (
+          <p className="ion-padding" style={{ color: 'var(--ion-color-danger)' }}>{error}</p>
+        ) : null}
 
         {!loading && jobs.length === 0 ? (
-          <div className="ion-padding ion-text-center" style={{ marginTop: 40 }}>
-            <IonIcon icon={briefcaseOutline} style={{ fontSize: 48, color: 'var(--ion-color-medium)' }} />
-            <p style={{ color: 'var(--ion-color-medium)' }}>No jobs found</p>
+          <div className="ion-padding ion-text-center" style={{ marginTop: 60 }}>
+            <IonIcon icon={briefcaseOutline} style={{ fontSize: 52, color: 'var(--ion-color-medium)' }} />
+            <p style={{ color: 'var(--ion-color-medium)', marginTop: 12 }}>No jobs found</p>
+            {hasFilters ? (
+              <IonButton fill="outline" size="small" onClick={() => history.push('/tabs/jobs')} style={{ marginTop: 8 }}>
+                Change Filters
+              </IonButton>
+            ) : null}
           </div>
         ) : null}
 
@@ -117,8 +199,11 @@ const JobsListPage: React.FC = () => {
                         </IonChip>
                       ) : null}
                       {job.experience_level ? (
-                        <IonBadge color={LEVEL_COLOR[job.experience_level] ?? 'medium'} style={{ textTransform: 'capitalize', borderRadius: 6, padding: '4px 8px' }}>
-                          {job.experience_level}
+                        <IonBadge
+                          color={LEVEL_COLOR[job.experience_level] ?? 'medium'}
+                          style={{ textTransform: 'capitalize', borderRadius: 6, padding: '4px 8px' }}
+                        >
+                          {LEVEL_LABEL[job.experience_level] ?? job.experience_level}
                         </IonBadge>
                       ) : null}
                     </div>

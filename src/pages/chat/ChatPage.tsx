@@ -8,7 +8,6 @@ import {
   IonIcon,
   IonInput,
   IonPage,
-  IonTitle,
   IonToast,
   IonToolbar,
 } from '@ionic/react';
@@ -20,17 +19,19 @@ import { getConversation, getMessages, markConversationRead, sendMessage } from 
 import Avatar from '../../components/Avatar';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
-import { useConversationSocket } from '../../hooks/useConversationSocket';
-import type { Conversation } from '../../types/message';
-import type { Message } from '../../types/message';
+import { useConversationSocket, whisperTyping } from '../../hooks/useConversationSocket';
+import { useIsOnline } from '../../context/OnlinePresenceContext';
+import type { Conversation, Message } from '../../types/message';
 import { hapticLight } from '../../utils/haptics';
 import { getOtherUserFromConversation } from '../../utils/social';
 
-function sortMessagesChronologically(messages: Message[]): Message[] {
+function sortChronologically(messages: Message[]): Message[] {
   return [...messages].sort(
     (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
   );
 }
+
+const TYPING_TIMEOUT_MS = 3000;
 
 const ChatPage: React.FC = () => {
   const { conversationId } = useParams<{ conversationId: string }>();
@@ -41,11 +42,17 @@ const ChatPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [otherIsTyping, setOtherIsTyping] = useState(false);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastWhisperRef = useRef<number>(0);
   const contentRef = useRef<HTMLIonContentElement | null>(null);
 
   const otherUser = user && conversation
     ? getOtherUserFromConversation(conversation, user.id)
     : undefined;
+
+  // Real-time online status from the global presence channel
+  const otherOnline = useIsOnline(otherUser?.id);
 
   const scrollToBottom = useCallback(async () => {
     await contentRef.current?.scrollToBottom(300);
@@ -54,12 +61,12 @@ const ChatPage: React.FC = () => {
   const loadMessages = useCallback(async () => {
     setLoading(true);
     try {
-      const [conversationData, messageData] = await Promise.all([
+      const [convData, msgData] = await Promise.all([
         getConversation(conversationId),
         getMessages(conversationId),
       ]);
-      setConversation(conversationData);
-      setMessages(sortMessagesChronologically(messageData));
+      setConversation(convData);
+      setMessages(sortChronologically(msgData));
       await markConversationRead(conversationId);
     } catch (err) {
       setError(getErrorMessage(err));
@@ -68,24 +75,51 @@ const ChatPage: React.FC = () => {
     }
   }, [conversationId]);
 
-  useEffect(() => {
-    void loadMessages();
-  }, [loadMessages]);
+  useEffect(() => { void loadMessages(); }, [loadMessages]);
 
   useEffect(() => {
-    if (!loading) {
-      void scrollToBottom();
-    }
+    if (!loading) void scrollToBottom();
   }, [messages, loading, scrollToBottom]);
 
-  const handleIncoming = useCallback((message: Message) => {
-    setMessages((prev) => {
-      if (prev.some((item) => item.id === message.id)) return prev;
-      return sortMessagesChronologically([...prev, message]);
-    });
+  useEffect(() => {
+    if (otherIsTyping) void scrollToBottom();
+  }, [otherIsTyping, scrollToBottom]);
+
+  useEffect(() => () => {
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
   }, []);
 
-  useConversationSocket(conversationId, handleIncoming);
+  const handleIncoming = useCallback((message: Message) => {
+    // Own messages are added from the API response; skip socket echo.
+    if (message.sender_id === user?.id) return;
+
+    setMessages((prev) => {
+      if (prev.some((m) => m.id === message.id)) return prev;
+      return sortChronologically([...prev, message]);
+    });
+  }, [user?.id]);
+
+  const handleTyping = useCallback((typingUserId: string) => {
+    if (typingUserId === user?.id) return;
+    setOtherIsTyping(true);
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => setOtherIsTyping(false), TYPING_TIMEOUT_MS);
+  }, [user?.id]);
+
+  useConversationSocket(conversationId, {
+    onMessage: handleIncoming,
+    onTyping: handleTyping,
+  });
+
+  const handleDraftChange = (value: string) => {
+    setDraft(value);
+    if (!user || !conversationId) return;
+    const now = Date.now();
+    if (now - lastWhisperRef.current > 2000) {
+      lastWhisperRef.current = now;
+      void whisperTyping(conversationId, user.id);
+    }
+  };
 
   const handleSend = async () => {
     const body = draft.trim();
@@ -95,7 +129,10 @@ const ChatPage: React.FC = () => {
     setError(null);
     try {
       const message = await sendMessage(conversationId, { body });
-      setMessages((prev) => sortMessagesChronologically([...prev, message]));
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === message.id)) return prev;
+        return sortChronologically([...prev, message]);
+      });
       setDraft('');
     } catch (err) {
       setError(getErrorMessage(err));
@@ -113,14 +150,26 @@ const ChatPage: React.FC = () => {
           </IonButtons>
           {otherUser ? (
             <div className="chat-header-user">
-              <Avatar name={otherUser.name} userAvatar={otherUser.avatar} size="sm" />
-              <span className="chat-header-name">{otherUser.name}</span>
+              <Avatar
+                name={otherUser.name}
+                userAvatar={otherUser.avatar}
+                isOnline={otherOnline}
+                size="sm"
+              />
+              <div className="chat-header-info">
+                <span className="chat-header-name">{otherUser.name}</span>
+                <span
+                  className="chat-header-status"
+                  style={{ color: otherOnline ? '#22c55e' : '#9ca3af', fontSize: 11 }}
+                >
+                  {otherIsTyping ? 'typing…' : otherOnline ? 'Online' : 'Offline'}
+                </span>
+              </div>
             </div>
-          ) : (
-            <IonTitle>Chat</IonTitle>
-          )}
+          ) : null}
         </IonToolbar>
       </IonHeader>
+
       <IonContent ref={contentRef} className="chat-content">
         {loading ? <LoadingSpinner /> : null}
         <div className="chat-messages">
@@ -129,7 +178,6 @@ const ChatPage: React.FC = () => {
             const showAvatar = !isMine && (
               index === 0 || messages[index - 1]?.sender_id !== message.sender_id
             );
-
             return (
               <div key={message.id} className={`chat-bubble-row ${isMine ? 'mine' : 'theirs'}`}>
                 {!isMine ? (
@@ -155,9 +203,27 @@ const ChatPage: React.FC = () => {
               </div>
             );
           })}
+
+          {otherIsTyping ? (
+            <div className="chat-bubble-row theirs">
+              <div className="chat-avatar-slot" />
+              <div className="chat-bubble theirs chat-typing-bubble">
+                <span className="typing-dot" />
+                <span className="typing-dot" />
+                <span className="typing-dot" />
+              </div>
+            </div>
+          ) : null}
         </div>
-        <IonToast isOpen={!!error} message={error ?? ''} duration={3000} color="danger" onDidDismiss={() => setError(null)} />
+        <IonToast
+          isOpen={!!error}
+          message={error ?? ''}
+          duration={3000}
+          color="danger"
+          onDidDismiss={() => setError(null)}
+        />
       </IonContent>
+
       <IonFooter className="chat-footer">
         <IonToolbar className="chat-input-toolbar messenger-input-toolbar">
           <div className="messenger-input-wrap">
@@ -165,7 +231,7 @@ const ChatPage: React.FC = () => {
               value={draft}
               placeholder="Aa"
               className="messenger-input"
-              onIonInput={(e) => setDraft(e.detail.value ?? '')}
+              onIonInput={(e) => handleDraftChange(e.detail.value ?? '')}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();

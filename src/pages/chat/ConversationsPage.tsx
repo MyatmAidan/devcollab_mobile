@@ -18,8 +18,18 @@ import Avatar from '../../components/Avatar';
 import EmptyState from '../../components/EmptyState';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
+import { useIsOnline } from '../../context/OnlinePresenceContext';
 import type { Conversation } from '../../types/message';
 import { formatMessageTime, getOtherUserFromConversation } from '../../utils/social';
+
+const ConversationAvatar: React.FC<{ userId?: string; name?: string; avatar?: string | null }> = ({
+  userId,
+  name,
+  avatar,
+}) => {
+  const online = useIsOnline(userId);
+  return <Avatar name={name} userAvatar={avatar} isOnline={userId ? online : undefined} size="md" />;
+};
 
 const ConversationsPage: React.FC = () => {
   const history = useHistory();
@@ -78,10 +88,10 @@ const ConversationsPage: React.FC = () => {
                   onClick={() => history.push(`/chat/${conversation.id}`)}
                 >
                   <div className="avatar-ring" slot="start">
-                    <Avatar
+                    <ConversationAvatar
+                      userId={other?.id}
                       name={other?.name}
-                      userAvatar={other?.avatar}
-                      size="md"
+                      avatar={other?.avatar}
                     />
                   </div>
                   <IonLabel>

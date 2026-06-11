@@ -12,12 +12,12 @@ import {
   IonSelectOption,
   IonTextarea,
   IonTitle,
-  IonToast,
   IonToolbar,
 } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getErrorMessage } from '../../api/axios';
+import { extractErrors, getErrorMessage } from '../../api/axios';
+import FormErrors from '../../components/FormErrors';
 import { getCategories, getSkills } from '../../api/developerApi';
 import { getMyProfile, updateProfile, uploadProfileCv } from '../../api/profileApi';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -42,6 +42,7 @@ const EditProfilePage: React.FC = () => {
   const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [formErrors, setFormErrors] = useState<string[]>([]);
   const [form, setForm] = useState({
     category_id: '' as string,
     profile_photo: '',
@@ -99,6 +100,7 @@ const EditProfilePage: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setSubmitting(true);
+    setFormErrors([]);
     setError(null);
     try {
       await updateProfile(
@@ -112,7 +114,7 @@ const EditProfilePage: React.FC = () => {
       );
       history.replace('/tabs/home');
     } catch (err) {
-      setError(getErrorMessage(err));
+      setFormErrors(extractErrors(err, 'Failed to update profile.'));
     } finally {
       setSubmitting(false);
     }
@@ -130,6 +132,7 @@ const EditProfilePage: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
         {loading ? <LoadingSpinner /> : null}
+        {error ? <FormErrors errors={[error]} style={{ margin: '12px 0' }} /> : null}
         {!loading ? (
           <form onSubmit={handleSubmit}>
             <ProfilePhotoInput
@@ -200,7 +203,7 @@ const EditProfilePage: React.FC = () => {
                   if (!file) return;
                   void uploadProfileCv(file)
                     .then((result) => setForm((prev) => ({ ...prev, cv_original_name: result.cv_original_name })))
-                    .catch((err) => setError(getErrorMessage(err)));
+                    .catch((err) => setFormErrors(extractErrors(err, 'CV upload failed.')));
                 }}
               />
               {form.cv_original_name ? <p>{form.cv_original_name}</p> : null}
@@ -213,12 +216,13 @@ const EditProfilePage: React.FC = () => {
               loading={skillsLoading}
             />
 
+            <FormErrors errors={formErrors} style={{ margin: '12px 0 4px' }} />
+
             <IonButton expand="block" type="submit" className="ion-margin-top" disabled={submitting}>
               {submitting ? 'Saving...' : 'Update Profile'}
             </IonButton>
           </form>
         ) : null}
-        <IonToast isOpen={!!error} message={error ?? ''} duration={3000} color="danger" onDidDismiss={() => setError(null)} />
       </IonContent>
     </IonPage>
   );

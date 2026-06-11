@@ -5,28 +5,30 @@ import {
   IonItem,
   IonLabel,
   IonPage,
-  IonToast,
 } from '@ionic/react';
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { extractErrors } from '../../api/axios';
 import BrandLogo from '../../components/BrandLogo';
+import FormErrors from '../../components/FormErrors';
 import { useAuth } from '../../hooks/useAuth';
 import { hapticMedium } from '../../utils/haptics';
 
 const RegisterPage: React.FC = () => {
   const history = useHistory();
-  const { register, error, clearError } = useAuth();
+  const { register } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     void hapticMedium();
+    setErrors([]);
     setSubmitting(true);
-    clearError();
     try {
       await register({
         name,
@@ -35,8 +37,8 @@ const RegisterPage: React.FC = () => {
         password_confirmation: passwordConfirmation,
       });
       history.replace('/onboarding');
-    } catch {
-      // Error handled in context.
+    } catch (err) {
+      setErrors(extractErrors(err, 'Registration failed. Please try again.'));
     } finally {
       setSubmitting(false);
     }
@@ -84,7 +86,10 @@ const RegisterPage: React.FC = () => {
                   required
                 />
               </IonItem>
-              <IonButton expand="block" type="submit" disabled={submitting}>
+
+              <FormErrors errors={errors} style={{ margin: '10px 0 4px' }} />
+
+              <IonButton expand="block" type="submit" disabled={submitting} style={{ marginTop: 8 }}>
                 {submitting ? 'Creating account...' : 'Create Account'}
               </IonButton>
             </form>
@@ -93,13 +98,6 @@ const RegisterPage: React.FC = () => {
             Already have an account? <Link to="/login">Sign in</Link>
           </p>
         </div>
-        <IonToast
-          isOpen={!!error}
-          message={error ?? ''}
-          duration={3000}
-          color="danger"
-          onDidDismiss={clearError}
-        />
       </IonContent>
     </IonPage>
   );

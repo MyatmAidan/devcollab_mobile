@@ -14,17 +14,24 @@ import '@ionic/react/css/palettes/dark.system.css';
 import './theme/variables.css';
 import './index.css';
 import { AuthProvider } from './context/AuthContext';
+import { CompanyAuthProvider } from './context/CompanyAuthContext';
+import { OnlinePresenceProvider } from './context/OnlinePresenceContext';
 import AppRoutes from './routes/AppRoutes';
 
 setupIonicReact({ mode: 'ios', animated: true });
 
 const App: React.FC = () => (
   <IonApp>
-    <AuthProvider>
-      <IonReactRouter>
-        <AppRoutes />
-      </IonReactRouter>
-    </AuthProvider>
+    <IonReactRouter>
+      <CompanyAuthProvider>
+        <AuthProvider>
+          {/* OnlinePresenceProvider must be inside AuthProvider */}
+          <OnlinePresenceProvider>
+            <AppRoutes />
+          </OnlinePresenceProvider>
+        </AuthProvider>
+      </CompanyAuthProvider>
+    </IonReactRouter>
   </IonApp>
 );
 

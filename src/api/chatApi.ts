@@ -1,4 +1,5 @@
 import { api } from './axios';
+import { getSocketId } from '../services/echoService';
 import type { ApiResponse, PaginatedResponse } from '../types/api';
 import type { Conversation, Message, StoreMessageInput } from '../types/message';
 
@@ -18,7 +19,12 @@ export async function getMessages(conversationId: string): Promise<Message[]> {
 }
 
 export async function sendMessage(conversationId: string, data: StoreMessageInput): Promise<Message> {
-  const response = await api.post(`/conversations/${conversationId}/messages`, data) as ApiResponse<Message>;
+  const socketId = await getSocketId();
+  const response = await api.post(
+    `/conversations/${conversationId}/messages`,
+    data,
+    socketId ? { headers: { 'X-Socket-Id': socketId } } : undefined,
+  ) as ApiResponse<Message>;
   return response.data;
 }
 
